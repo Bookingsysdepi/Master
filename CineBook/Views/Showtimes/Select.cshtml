@@ -1,0 +1,137 @@
+@model CineBook.ViewModels.SeatSelectionViewModel
+
+@{
+    ViewData["Title"] = "Select Seats";
+}
+
+<div class="mb-4">
+    <a asp-controller="Movies" asp-action="Details" asp-route-id="@Model.Showtime.MovieId" class="back-link">
+        <i class="bi bi-arrow-left" aria-hidden="true"></i> Back to Movie
+    </a>
+</div>
+
+@if (TempData["SeatError"] != null)
+{
+    <div class="alert alert-warning" role="alert">
+        @TempData["SeatError"]
+    </div>
+}
+
+<div class="row g-4 mb-4 align-items-end">
+    <div class="col-lg-8">
+        <div class="page-kicker">Booking flow</div>
+        <h1 class="h2 mb-2">Select Seats</h1>
+        <p class="mb-1 h5">@Model.Showtime.Movie.Title</p>
+        <p class="text-muted mb-0">
+            @Model.Showtime.Hall.Name |
+            @Model.Showtime.StartTime.ToString("dd MMM yyyy") |
+            @Model.Showtime.StartTime.ToString("hh:mm tt")
+        </p>
+    </div>
+    <div class="col-lg-4">
+        <div class="surface-card p-3">
+            <div class="d-flex justify-content-between">
+                <span>Normal</span>
+                <strong>@Model.Showtime.NormalPrice.ToString("0.00") EGP</strong>
+            </div>
+            <div class="d-flex justify-content-between">
+                <span>VIP</span>
+                <strong>@Model.Showtime.VipPrice.ToString("0.00") EGP</strong>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="seat-screen text-center text-muted mb-4">Screen</div>
+
+<form asp-controller="Bookings" asp-action="Create" method="post">
+    <input type="hidden" name="showtimeId" value="@Model.Showtime.Id" />
+    <div id="selectedSeatInputs"></div>
+
+    <div class="seat-map mb-4">
+        @foreach (var row in Model.SeatsByRow)
+        {
+            <div class="seat-row">
+                <div class="seat-row-label">@row.Key</div>
+                <div class="seat-row-buttons">
+                    @foreach (var seat in row.Value)
+                    {
+                        var isTaken = Model.TakenSeatIds.Contains(seat.Id);
+                        var seatClass = seat.SeatType == SeatType.VIP ? "seat-vip" : "seat-normal";
+
+                        <button type="button"
+                                class="seat-button @seatClass @(isTaken ? "seat-taken" : "")"
+                                data-seat-id="@seat.Id"
+                                data-price="@(seat.SeatType == SeatType.VIP ? Model.Showtime.VipPrice : Model.Showtime.NormalPrice)"
+                                disabled="@isTaken">
+                            @seat.SeatNumber
+                        </button>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="surface-card p-3 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+        <div>
+            <div class="text-muted small">Selected Seats</div>
+            <div id="selectedSeatsText">None</div>
+        </div>
+        <div class="text-md-end">
+            <div class="text-muted small">Total</div>
+            <div class="h4 mb-0"><span id="totalPrice">0.00</span> EGP</div>
+        </div>
+        <button type="submit" id="continueButton" class="btn btn-primary" disabled>Continue to Booking</button>
+    </div>
+</form>
+
+<div class="d-flex flex-wrap gap-3 mt-4 small">
+    <span><span class="seat-legend seat-normal"></span> Normal</span>
+    <span><span class="seat-legend seat-vip"></span> VIP</span>
+    <span><span class="seat-legend seat-selected"></span> Selected</span>
+    <span><span class="seat-legend seat-taken"></span> Taken</span>
+</div>
+
+@section Scripts {
+    <script>
+        $(function () {
+            var selectedSeats = [];
+
+            function updateSummary() {
+                var total = 0;
+                var seatNumbers = [];
+
+                $(".seat-button.selected").each(function () {
+                    total += parseFloat($(this).data("price"));
+                    seatNumbers.push($(this).closest(".seat-row").find(".seat-row-label").text() + $(this).text().trim());
+                });
+
+                $("#selectedSeatInputs").empty();
+
+                selectedSeats.forEach(function (seatId) {
+                    $("#selectedSeatInputs").append('<input type="hidden" name="seatIds" value="' + seatId + '" />');
+                });
+
+                $("#selectedSeatsText").text(seatNumbers.length > 0 ? seatNumbers.join(", ") : "None");
+                $("#totalPrice").text(total.toFixed(2));
+                $("#continueButton").prop("disabled", selectedSeats.length === 0);
+            }
+
+            $(".seat-button:not(.seat-taken)").on("click", function () {
+                var seatId = $(this).data("seat-id").toString();
+
+                $(this).toggleClass("selected");
+
+                if ($(this).hasClass("selected")) {
+                    selectedSeats.push(seatId);
+                } else {
+                    selectedSeats = selectedSeats.filter(function (id) {
+                        return id !== seatId;
+                    });
+                }
+
+                updateSummary();
+            });
+        });
+    </script>
+}

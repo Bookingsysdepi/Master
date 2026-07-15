@@ -1,0 +1,60 @@
+@model CineBook.Dtos.Showtimes.CreateShowtimeFormDto
+
+@{
+    ViewData["Title"] = "Add Showtime";
+}
+
+<div class="mb-4">
+    <a href="/Admin/Movies" class="back-link"><i class="bi bi-arrow-left" aria-hidden="true"></i> Back to Movies</a>
+    <div class="page-kicker mt-3">Admin</div>
+    <h1 class="h3 mt-3">Add Showtime</h1>
+    <p class="text-muted mb-0">@Model.MovieTitle</p>
+</div>
+
+<form method="post" action="/Admin/Movies/@Model.MovieId/Showtimes/Create" class="form-panel row g-3">
+    @Html.AntiForgeryToken()
+    <input asp-for="MovieId" type="hidden" />
+
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="col-md-6">
+        <label asp-for="HallId" class="form-label">Hall</label>
+        <select asp-for="HallId" class="form-select">
+            <option value="">Select hall</option>
+            @foreach (var hall in Model.Halls)
+            {
+                <option value="@hall.Id">@hall.Name</option>
+            }
+        </select>
+        <span asp-validation-for="HallId" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-6">
+        <label asp-for="StartTime" class="form-label">Start Time</label>
+        <input asp-for="StartTime" type="datetime-local" min="@Model.MinimumStartTime.ToString("yyyy-MM-ddTHH:mm")" class="form-control" />
+        <span asp-validation-for="StartTime" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-6">
+        <label asp-for="NormalPrice" class="form-label">Normal Price</label>
+        <input asp-for="NormalPrice" class="form-control" />
+        <span asp-validation-for="NormalPrice" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-6">
+        <label asp-for="VipPrice" class="form-label">VIP Price</label>
+        <input asp-for="VipPrice" class="form-control" />
+        <span asp-validation-for="VipPrice" class="text-danger"></span>
+    </div>
+
+    <div class="col-12 admin-form-actions">
+        <button type="submit" class="btn btn-primary">Save Showtime</button>
+        <a href="/Admin/Movies" class="btn btn-outline-dark">Cancel</a>
+    </div>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

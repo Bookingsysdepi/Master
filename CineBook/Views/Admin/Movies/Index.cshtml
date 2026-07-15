@@ -1,0 +1,97 @@
+@model CineBook.ViewModels.AdminMovieIndexViewModel
+
+@{
+    ViewData["Title"] = "Admin Movies";
+}
+
+<div class="admin-toolbar">
+    <div>
+        <div class="page-kicker">Admin</div>
+        <h1 class="h3 mb-1">Movie Management</h1>
+        <p class="text-muted mb-0">Add, edit, and review movies in the system.</p>
+    </div>
+    <a href="/Admin/Movies/Create" class="btn btn-primary"><i class="bi bi-plus-lg" aria-hidden="true"></i> Add Movie</a>
+</div>
+
+@if (TempData["AdminMovieMessage"] != null)
+{
+    <div class="alert alert-success" role="alert">@TempData["AdminMovieMessage"]</div>
+}
+
+@if (TempData["AdminMovieError"] != null)
+{
+    <div class="alert alert-warning" role="alert">@TempData["AdminMovieError"]</div>
+}
+
+<form method="get" action="/Admin/Movies" class="search-panel row g-3 align-items-end mb-4">
+    <div class="col-md-5">
+        <label class="form-label" for="Title">Title</label>
+        <input class="form-control" id="Title" name="Title" value="@Model.Search.Title" />
+    </div>
+    <div class="col-md-4">
+        <label class="form-label" for="Genre">Genre</label>
+        <select class="form-select" id="Genre" name="Genre">
+            <option value="">All genres</option>
+            @foreach (var genre in Enum.GetValues<Genre>())
+            {
+                <option value="@genre" selected="@(Model.Search.Genre == genre)">@genre</option>
+            }
+        </select>
+    </div>
+    <div class="col-md-3">
+        <button type="submit" class="btn btn-outline-light">Search</button>
+        <a href="/Admin/Movies" class="btn btn-link text-dark">Clear</a>
+    </div>
+</form>
+
+@if (Model.Movies.Any())
+{
+    <div class="table-responsive data-panel">
+        <table class="table admin-table align-middle mb-0">
+            <thead class="table-dark">
+                <tr>
+                    <th>Title</th>
+                    <th>Genre</th>
+                    <th>Duration</th>
+                    <th>Language</th>
+                    <th>Release Date</th>
+                    <th>Status</th>
+                    <th>Showtimes</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var movie in Model.Movies)
+                {
+                    <tr>
+                        <td class="fw-semibold">@movie.Title</td>
+                        <td>@movie.Genre</td>
+                        <td>@movie.DurationMinutes min</td>
+                        <td>@movie.Language</td>
+                        <td>@movie.ReleaseDate.ToString("dd MMM yyyy")</td>
+                        <td><span class="status-badge @(movie.Status == "NowShowing" ? "is-good" : "is-warn")">@movie.Status</span></td>
+                        <td>@movie.ShowtimesCount</td>
+                        <td>
+                            <div class="admin-actions">
+                            <a href="/Admin/Movies/@movie.Id/Showtimes/Create" class="btn btn-sm btn-outline-secondary">Add Showtime</a>
+                            <a href="/Admin/Movies/Edit/@movie.Id" class="btn btn-sm btn-outline-dark">Edit</a>
+                            <form method="post" action="/Admin/Movies/Delete/@movie.Id" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this movie?');">Delete</button>
+                            </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="empty-state">
+        <i class="bi bi-camera-reels" aria-hidden="true"></i>
+        <h2 class="h5">No movies found</h2>
+        <p class="text-muted mb-0">Try changing the search filters or add a new movie.</p>
+    </div>
+}

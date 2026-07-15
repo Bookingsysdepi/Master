@@ -1,0 +1,126 @@
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -4rem;
+  z-index: 1100;
+  border-radius: 6px;
+  background: var(--cb-accent);
+  color: #111827;
+  padding: 0.75rem 1rem;
+  font-weight: 700;
+  transition: top 0.2s ease;
+}
+
+.skip-link:focus {
+  top: 1rem;
+  color: #111827;
+}
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 1020;
+  background: rgba(15, 23, 42, 0.88);
+  border-bottom: 1px solid var(--cb-border);
+  backdrop-filter: blur(16px);
+}
+
+.cine-navbar {
+  min-height: 76px;
+}
+
+.brand-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  color: var(--cb-text) !important;
+  font-weight: 700;
+}
+
+.brand-icon {
+  display: inline-grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border-radius: 8px;
+  background: var(--cb-primary);
+  color: #fff;
+  box-shadow: 0 10px 26px rgba(220, 38, 38, 0.32);
+}
+
+.navbar-dark .navbar-nav .nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: rgba(248, 250, 252, 0.76);
+  font-weight: 500;
+}
+
+.navbar-dark .navbar-nav .nav-link:hover,
+.navbar-dark .navbar-nav .nav-link:focus {
+  color: var(--cb-text);
+}
+
+.nav-action {
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.nav-user .nav-link {
+  color: var(--cb-muted) !important;
+}
+
+.dropdown-menu-dark {
+  background-color: #111827;
+  border: 1px solid var(--cb-border);
+  box-shadow: var(--cb-shadow);
+}
+
+.site-main {
+  min-height: calc(100vh - 274px);
+  padding: 3rem 0 4rem;
+}
+
+.site-footer {
+  border-top: 1px solid var(--cb-border);
+  background: rgba(2, 6, 23, 0.28);
+  padding: 2.25rem 0 1.25rem;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2rem;
+  align-items: start;
+}
+
+.footer-brand {
+  margin-bottom: 0.75rem;
+}
+
+.footer-copy {
+  max-width: 34rem;
+  margin: 0;
+  color: var(--cb-muted);
+}
+
+.footer-links {
+  display: flex;
+  gap: 1.25rem;
+}
+
+.footer-links a {
+  color: var(--cb-muted);
+  text-decoration: none;
+}
+
+.footer-links a:hover {
+  color: var(--cb-text);
+}
+
+.footer-bottom {
+  margin-top: 1.5rem;
+  color: rgba(148, 163, 184, 0.72);
+  font-size: 0.875rem;
+}

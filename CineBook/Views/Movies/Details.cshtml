@@ -1,0 +1,73 @@
+@model CineBook.Dtos.Movies.MovieDetailsDto
+
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="mb-4">
+    <a asp-controller="Movies" asp-action="Index" class="back-link">
+        <i class="bi bi-arrow-left" aria-hidden="true"></i> Back to Movies
+    </a>
+</div>
+
+<section class="row g-4 details-hero mb-5">
+    <div class="col-md-4 col-lg-3">
+        <img src="@Model.PosterUrl" class="movie-details-poster" alt="@Model.Title poster">
+    </div>
+
+    <div class="col-md-8 col-lg-9">
+        <div class="page-kicker mb-2">@Model.Status</div>
+        <h1 class="display-5 fw-bold">@Model.Title</h1>
+
+        <div class="meta-row my-3">
+            <span class="genre-badge">@Model.Genre</span>
+            <span class="meta-pill"><i class="bi bi-clock" aria-hidden="true"></i> @Model.DurationMinutes min</span>
+            <span class="meta-pill"><i class="bi bi-translate" aria-hidden="true"></i> @Model.Language</span>
+            <span class="meta-pill"><i class="bi bi-calendar3" aria-hidden="true"></i> @Model.ReleaseDate.ToString("dd MMM yyyy")</span>
+        </div>
+
+        <p class="lead text-muted">@Model.Description</p>
+    </div>
+</section>
+
+<section aria-labelledby="showtimes-title">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <h2 id="showtimes-title" class="h3 mb-0">Showtimes</h2>
+        <span class="status-badge">@Model.Showtimes.Count option(s)</span>
+    </div>
+
+    @if (Model.Showtimes.Any())
+    {
+        <div class="row g-3">
+            @foreach (var showtime in Model.Showtimes)
+            {
+                <div class="col-md-6 col-xl-4">
+                    <article class="showtime-card h-100">
+                        <div class="d-flex justify-content-between gap-3 mb-3">
+                            <div>
+                                <div class="fw-semibold">@showtime.StartTime.ToString("dd MMM yyyy")</div>
+                                <div class="text-muted">@showtime.StartTime.ToString("hh:mm tt")</div>
+                            </div>
+                            <span class="status-badge">@showtime.HallName</span>
+                        </div>
+                        <div class="d-flex justify-content-between text-muted mb-2">
+                            <span>Normal</span>
+                            <strong class="text-white">@showtime.NormalPrice.ToString("0.00") EGP</strong>
+                        </div>
+                        <div class="d-flex justify-content-between text-muted mb-3">
+                            <span>VIP</span>
+                            <strong class="text-white">@showtime.VipPrice.ToString("0.00") EGP</strong>
+                        </div>
+                        <a asp-controller="Showtimes" asp-action="Select" asp-route-id="@showtime.Id" class="btn btn-primary w-100">
+                            Book Seats
+                        </a>
+                    </article>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <partial name="_EmptyState" model="@("No showtimes are available for this movie yet.")" />
+    }
+</section>

@@ -1,0 +1,63 @@
+@{
+    ViewData["Title"] = "Premium Cinema Booking";
+}
+
+<section class="hero-section mb-4" aria-labelledby="home-title">
+    <div class="hero-content">
+        <div class="page-kicker mb-3">Reserved seats. Better nights.</div>
+        <h1 id="home-title" class="hero-title">CineBook</h1>
+        <p class="hero-copy">
+            Choose your film, reserve the exact seats you want, and keep the evening moving with a cinema booking experience built for comfort.
+        </p>
+        <div class="hero-actions">
+            <a asp-controller="Movies" asp-action="Index" class="btn btn-primary">
+                <i class="bi bi-ticket-detailed" aria-hidden="true"></i> Browse Movies
+            </a>
+            @if (User.Identity?.IsAuthenticated != true)
+            {
+                <a asp-controller="Account" asp-action="Register" class="btn btn-outline-light">Create Account</a>
+            }
+        </div>
+    </div>
+</section>
+
+<section class="feature-strip mb-5" aria-label="CineBook highlights">
+    <div class="surface-card feature-item">
+        <i class="bi bi-grid-3x3-gap" aria-hidden="true"></i>
+        <h2 class="h6 mt-3">Seat-first booking</h2>
+        <p class="text-muted mb-0">Clear seat maps, VIP choices, and transparent pricing before checkout.</p>
+    </div>
+    <div class="surface-card feature-item">
+        <i class="bi bi-camera-reels" aria-hidden="true"></i>
+        <h2 class="h6 mt-3">Now showing</h2>
+        <p class="text-muted mb-0">Browse current releases and upcoming films in a polished catalog.</p>
+    </div>
+    <div class="surface-card feature-item">
+        <i class="bi bi-cup-straw" aria-hidden="true"></i>
+        <h2 class="h6 mt-3">In-seat snacks</h2>
+        <p class="text-muted mb-0">Confirmed bookings can order canteen items for delivery to selected seats.</p>
+    </div>
+</section>
+
+<section class="row g-4 align-items-center">
+    <div class="col-lg-7">
+        <div class="section-heading">
+            <div class="page-kicker">Featured Experience</div>
+            <h2 class="h1">A calmer way to plan movie night.</h2>
+            <p class="text-muted mb-0">
+                CineBook keeps discovery, seat selection, ticket confirmation, and concessions connected without making the interface feel busy.
+            </p>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="surface-card p-4">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <span class="status-badge is-warn">Tonight</span>
+                <span class="text-muted">Premium halls</span>
+            </div>
+            <h3 class="h4">Find your next screening</h3>
+            <p class="text-muted">Explore showtimes, compare halls, and book seats in a few focused steps.</p>
+            <a asp-controller="Movies" asp-action="Index" class="btn btn-outline-light">View Movie Catalog</a>
+        </div>
+    </div>
+</section>

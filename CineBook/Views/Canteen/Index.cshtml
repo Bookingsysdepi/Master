@@ -1,0 +1,158 @@
+@model CineBook.ViewModels.CanteenDashboardViewModel
+@using CineBook.Models
+
+@{
+    ViewData["Title"] = "Canteen Dashboard";
+}
+
+<div class="section-heading">
+    <div class="page-kicker">Operations</div>
+    <h1>Canteen Dashboard</h1>
+    <p class="text-muted mb-0">Prepare orders, deliver to seats, and update snack availability.</p>
+</div>
+
+@if (TempData["CanteenMessage"] != null)
+{
+    <div class="alert alert-success" role="alert">@TempData["CanteenMessage"]</div>
+}
+
+@if (TempData["CanteenError"] != null)
+{
+    <div class="alert alert-warning" role="alert">@TempData["CanteenError"]</div>
+}
+
+<section class="mb-5">
+    <h2 class="h4 mb-3">Snack Orders</h2>
+
+    @if (Model.Orders.Any())
+    {
+        <div class="table-responsive data-panel">
+            <table class="table admin-table align-middle mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Order</th>
+                        <th>Customer</th>
+                        <th>Movie</th>
+                        <th>Seats</th>
+                        <th>Items</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var order in Model.Orders)
+                    {
+                        <tr>
+                            <td>
+                                #@order.Id
+                                <div class="text-muted small">@order.CreatedAtUtc.ToLocalTime().ToString("dd MMM hh:mm tt")</div>
+                            </td>
+                            <td>@order.CustomerName</td>
+                            <td>
+                                <div class="fw-semibold">@order.MovieTitle</div>
+                                <div class="text-muted small">@order.HallName | @order.StartTime.ToString("hh:mm tt")</div>
+                            </td>
+                            <td>@string.Join(", ", order.Seats)</td>
+                            <td>
+                                @foreach (var item in order.Items)
+                                {
+                                    <div>@item.Name x @item.Quantity</div>
+                                }
+                            </td>
+                            <td>@order.TotalPrice.ToString("0.00") EGP</td>
+                            <td><span class="status-badge @(order.Status == SnackOrderStatus.Delivered ? "is-good" : order.Status == SnackOrderStatus.Cancelled ? "" : "is-warn")">@order.Status</span></td>
+                            <td>
+                                <div class="admin-actions">
+                                @if (order.Status == SnackOrderStatus.Pending)
+                                {
+                                    <form method="post" action="/Canteen/Orders/@order.Id/Status" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="status" value="@SnackOrderStatus.Preparing" />
+                                        <button type="submit" class="btn btn-sm btn-outline-dark">Prepare</button>
+                                    </form>
+                                    <form method="post" action="/Canteen/Orders/@order.Id/Status" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="status" value="@SnackOrderStatus.Cancelled" />
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">Cancel</button>
+                                    </form>
+                                }
+                                @if (order.Status == SnackOrderStatus.Preparing)
+                                {
+                                    <form method="post" action="/Canteen/Orders/@order.Id/Status" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="status" value="@SnackOrderStatus.OutForDelivery" />
+                                        <button type="submit" class="btn btn-sm btn-outline-dark">Out for Delivery</button>
+                                    </form>
+                                }
+                                @if (order.Status == SnackOrderStatus.OutForDelivery)
+                                {
+                                    <form method="post" action="/Canteen/Orders/@order.Id/Status" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="status" value="@SnackOrderStatus.Delivered" />
+                                        <button type="submit" class="btn btn-sm btn-success">Delivered</button>
+                                    </form>
+                                }
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="empty-state">
+            <i class="bi bi-receipt" aria-hidden="true"></i>
+            <h3 class="h6">No snack orders yet</h3>
+            <p class="text-muted mb-0">Orders will appear here when customers request delivery to their seats.</p>
+        </div>
+    }
+</section>
+
+<section>
+    <h2 class="h4 mb-3">Snack Availability</h2>
+
+    @if (Model.Snacks.Any())
+    {
+        <div class="table-responsive data-panel">
+            <table class="table admin-table align-middle mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Name</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var snack in Model.Snacks)
+                    {
+                        <tr>
+                            <td class="fw-semibold">@snack.Name</td>
+                            <td>@snack.Category</td>
+                            <td>@snack.Price.ToString("0.00") EGP</td>
+                            <td><span class="status-badge @(snack.IsAvailable ? "is-good" : "")">@(snack.IsAvailable ? "Available" : "Unavailable")</span></td>
+                            <td>
+                                <div class="admin-actions">
+                                <form method="post" action="/Canteen/Snacks/@snack.Id/ToggleAvailability">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-sm btn-outline-secondary">
+                                        @(snack.IsAvailable ? "Out of Stock" : "Available")
+                                    </button>
+                                </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <partial name="_EmptyState" model="@("No snacks have been added by admin yet.")" />
+    }
+</section>

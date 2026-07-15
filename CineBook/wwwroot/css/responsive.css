@@ -1,0 +1,64 @@
+@media (max-width: 991.98px) {
+  .site-main {
+    padding-top: 2rem;
+  }
+
+  .hero-section {
+    padding: 2rem;
+    min-height: 380px;
+  }
+
+  .feature-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-toolbar,
+  .footer-grid {
+    grid-template-columns: 1fr;
+    display: grid;
+  }
+
+  .footer-links {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .hero-section {
+    padding: 1.35rem;
+    min-height: 420px;
+  }
+
+  .hero-title {
+    font-size: 2.45rem;
+  }
+
+  .surface-card,
+  .auth-card,
+  .search-panel,
+  .form-panel,
+  .empty-state {
+    padding: 1rem;
+  }
+
+  .movie-poster {
+    height: 420px;
+  }
+
+  .seat-map {
+    padding: 0.85rem;
+    overflow-x: auto;
+  }
+
+  .seat-row {
+    align-items: flex-start;
+  }
+
+  .seat-row-buttons {
+    min-width: 420px;
+  }
+
+  .admin-actions {
+    justify-content: flex-start;
+  }
+}

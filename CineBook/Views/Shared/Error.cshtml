@@ -1,0 +1,26 @@
+@model ErrorViewModel
+@{
+    ViewData["Title"] = "Error";
+}
+
+<section class="row justify-content-center">
+    <div class="col-lg-7">
+        <div class="surface-card p-4 text-center">
+            <div class="confirmation-mark mx-auto mb-3" style="background: rgba(220, 38, 38, 0.18); color: #fecaca;">
+                <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
+            </div>
+            <div class="page-kicker">Something went wrong</div>
+            <h1 class="h2">We could not complete that request.</h1>
+            <p class="text-muted">Please try again, or return to the movie catalog.</p>
+
+            @if (Model.ShowRequestId)
+            {
+                <p class="text-muted mb-4">
+                    <strong>Request ID:</strong> <code>@Model.RequestId</code>
+                </p>
+            }
+
+            <a asp-controller="Movies" asp-action="Index" class="btn btn-primary">Browse Movies</a>
+        </div>
+    </div>
+</section>

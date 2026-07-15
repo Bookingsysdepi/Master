@@ -1,0 +1,102 @@
+@model CineBook.ViewModels.AdminSnackIndexViewModel
+
+@{
+    ViewData["Title"] = "Admin Canteen";
+}
+
+<div class="admin-toolbar">
+    <div>
+        <div class="page-kicker">Admin</div>
+        <h1 class="h3 mb-1">Canteen Management</h1>
+        <p class="text-muted mb-0">Add, edit, and manage snack availability.</p>
+    </div>
+    <a href="/Admin/Snacks/Create" class="btn btn-primary"><i class="bi bi-plus-lg" aria-hidden="true"></i> Add Snack</a>
+</div>
+
+@if (TempData["AdminSnackMessage"] != null)
+{
+    <div class="alert alert-success" role="alert">@TempData["AdminSnackMessage"]</div>
+}
+
+@if (TempData["AdminSnackError"] != null)
+{
+    <div class="alert alert-warning" role="alert">@TempData["AdminSnackError"]</div>
+}
+
+<form method="get" action="/Admin/Snacks" class="search-panel row g-3 align-items-end mb-4">
+    <div class="col-md-4">
+        <label class="form-label" for="SearchTerm">Search</label>
+        <input class="form-control" id="SearchTerm" name="SearchTerm" value="@Model.Search.SearchTerm" placeholder="Name or description" />
+    </div>
+    <div class="col-md-3">
+        <label class="form-label" for="Category">Category</label>
+        <select class="form-select" id="Category" name="Category">
+            <option value="">All categories</option>
+            @foreach (var category in Enum.GetValues<SnackCategory>())
+            {
+                <option value="@category" selected="@(Model.Search.Category == category)">@category</option>
+            }
+        </select>
+    </div>
+    <div class="col-md-3">
+        <label class="form-label" for="IsAvailable">Availability</label>
+        <select class="form-select" id="IsAvailable" name="IsAvailable">
+            <option value="">All items</option>
+            <option value="true" selected="@(Model.Search.IsAvailable == true)">Available</option>
+            <option value="false" selected="@(Model.Search.IsAvailable == false)">Unavailable</option>
+        </select>
+    </div>
+    <div class="col-md-2">
+        <button type="submit" class="btn btn-outline-light">Search</button>
+        <a href="/Admin/Snacks" class="btn btn-link text-dark">Clear</a>
+    </div>
+</form>
+
+@if (Model.Snacks.Any())
+{
+    <div class="table-responsive data-panel">
+        <table class="table admin-table align-middle mb-0">
+            <thead class="table-dark">
+                <tr>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Description</th>
+                    <th>Price</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var snack in Model.Snacks)
+                {
+                    <tr>
+                        <td class="fw-semibold">@snack.Name</td>
+                        <td>@snack.Category</td>
+                        <td>@snack.Description</td>
+                        <td>@snack.Price.ToString("0.00") EGP</td>
+                        <td><span class="status-badge @(snack.IsAvailable ? "is-good" : "")">@(snack.IsAvailable ? "Available" : "Unavailable")</span></td>
+                        <td>
+                            <div class="admin-actions">
+                            <a href="/Admin/Snacks/Edit/@snack.Id" class="btn btn-sm btn-outline-dark">Edit</a>
+                            <form method="post" action="/Admin/Snacks/ToggleAvailability/@snack.Id" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-sm btn-outline-secondary">
+                                    @(snack.IsAvailable ? "Mark Unavailable" : "Mark Available")
+                                </button>
+                            </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="empty-state">
+        <i class="bi bi-cup-straw" aria-hidden="true"></i>
+        <h2 class="h5">No snacks found</h2>
+        <p class="text-muted mb-0">Try changing the filters or add a new snack.</p>
+    </div>
+}

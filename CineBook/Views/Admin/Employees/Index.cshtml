@@ -1,0 +1,99 @@
+@model CineBook.ViewModels.AdminEmployeeIndexViewModel
+
+@{
+    ViewData["Title"] = "Admin Employees";
+}
+
+<div class="admin-toolbar">
+    <div>
+        <div class="page-kicker">Admin</div>
+        <h1 class="h3 mb-1">Employee Management</h1>
+        <p class="text-muted mb-0">Add and manage canteen employee accounts.</p>
+    </div>
+    <a href="/Admin/Employees/Create" class="btn btn-primary"><i class="bi bi-person-plus" aria-hidden="true"></i> Add Employee</a>
+</div>
+
+@if (TempData["AdminEmployeeMessage"] != null)
+{
+    <div class="alert alert-success" role="alert">@TempData["AdminEmployeeMessage"]</div>
+}
+
+@if (TempData["AdminEmployeeError"] != null)
+{
+    <div class="alert alert-warning" role="alert">@TempData["AdminEmployeeError"]</div>
+}
+
+<form method="get" action="/Admin/Employees" class="search-panel row g-3 align-items-end mb-4">
+    <div class="col-md-6">
+        <label class="form-label" for="SearchTerm">Search</label>
+        <input class="form-control" id="SearchTerm" name="SearchTerm" value="@Model.Search.SearchTerm" placeholder="Name, email, or national ID" />
+    </div>
+    <div class="col-md-3">
+        <label class="form-label" for="IsActive">Status</label>
+        <select class="form-select" id="IsActive" name="IsActive">
+            <option value="">All statuses</option>
+            <option value="true" selected="@(Model.Search.IsActive == true)">Active</option>
+            <option value="false" selected="@(Model.Search.IsActive == false)">Inactive</option>
+        </select>
+    </div>
+    <div class="col-md-3">
+        <button type="submit" class="btn btn-outline-light">Search</button>
+        <a href="/Admin/Employees" class="btn btn-link text-dark">Clear</a>
+    </div>
+</form>
+
+@if (Model.Employees.Any())
+{
+    <div class="table-responsive data-panel">
+        <table class="table admin-table align-middle mb-0">
+            <thead class="table-dark">
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>National ID</th>
+                    <th>Salary</th>
+                    <th>Hire Date</th>
+                    <th>Job</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var employee in Model.Employees)
+                {
+                    <tr>
+                        <td class="fw-semibold">@employee.FullName</td>
+                        <td>@employee.Email</td>
+                        <td>@employee.PhoneNumber</td>
+                        <td>@employee.NationalId</td>
+                        <td>@employee.Salary.ToString("0.00")</td>
+                        <td>@employee.HireDate.ToString("dd MMM yyyy")</td>
+                        <td>@employee.JobTitle</td>
+                        <td><span class="status-badge @(employee.IsActive ? "is-good" : "")">@(employee.IsActive ? "Active" : "Inactive")</span></td>
+                        <td>
+                            <div class="admin-actions">
+                            <a href="/Admin/Employees/Edit/@employee.Id" class="btn btn-sm btn-outline-dark">Edit</a>
+                            @if (employee.IsActive)
+                            {
+                                <form method="post" action="/Admin/Employees/Deactivate/@employee.Id" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Deactivate this employee account?');">Deactivate</button>
+                                </form>
+                            }
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="empty-state">
+        <i class="bi bi-people" aria-hidden="true"></i>
+        <h2 class="h5">No employees found</h2>
+        <p class="text-muted mb-0">Try changing the filters or add a new employee.</p>
+    </div>
+}

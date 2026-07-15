@@ -1,0 +1,15 @@
+@model CineBook.Dtos.Movies.MovieCardDto
+
+<article class="card movie-card h-100">
+    <img src="@Model.PosterUrl" class="card-img-top movie-poster" alt="@Model.Title poster">
+    <div class="card-body d-flex flex-column">
+        <div class="meta-row mb-3">
+            <span class="genre-badge">@Model.Genre</span>
+            <span class="meta-pill"><i class="bi bi-clock" aria-hidden="true"></i> @Model.DurationMinutes min</span>
+        </div>
+        <h3 class="h5 card-title">@Model.Title</h3>
+        <a asp-controller="Movies" asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-light btn-sm mt-auto">
+            View Details
+        </a>
+    </div>
+</article>
